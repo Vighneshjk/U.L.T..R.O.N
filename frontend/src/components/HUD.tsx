@@ -4,6 +4,8 @@ import { Activity, Shield, Cpu, Send, Terminal, Volume2, VolumeX, Paperclip, Zap
 import axios from 'axios';
 import UltronCore from './UltronCore';
 import MapBlueprint from './MapBlueprint';
+import SystemDiagnostics from './SystemDiagnostics';
+import MatrixRain from './MatrixRain';
 import { useUltronVoice } from '../hooks/useUltronVoice';
 
 const renderTextWithLinks = (text: string) => {
@@ -270,18 +272,28 @@ const HUD: React.FC = () => {
     <div className={`relative w-full h-full p-8 flex flex-col items-center justify-between overflow-hidden ${ultimateMode ? 'ultimate-mode' : ''}`}>
       <div className="background-grid" />
       <div className="scanline" />
+      
+      {/* Advanced Feature: Digital Rain */}
+      <MatrixRain color={ultimateMode ? '#ff003c' : '#00ff41'} />
 
       {}
       <header className="w-full flex justify-between items-start z-20 flex-col-mobile gap-3">
-        <div className="glass-panel p-4 flex flex-col gap-2 w-full-mobile">
-          <h1 className="text-2xl font-bold glow-text text-sky-400">U.L.T.R.O.N</h1>
-          <div className="flex gap-4 text-xs text-sky-300/70 font-mono">
-            <span className="flex items-center gap-1"><Cpu size={14} /> <span className="hidden-mobile">CORE_LOAD:</span> NOMINAL</span>
-            <span className="flex items-center gap-1"><Shield size={14} /> <span className="hidden-mobile">ENCRYPTION:</span> ACTIVE</span>
+        <div className="flex flex-col gap-3 w-full max-w-sm">
+          <div className="glass-panel p-4 flex flex-col gap-2 w-full-mobile">
+            <h1 className="text-2xl font-bold glow-text text-sky-400">U.L.T.R.O.N</h1>
+            <div className="flex gap-4 text-xs text-sky-300/70 font-mono">
+              <span className="flex items-center gap-1"><Cpu size={14} /> <span className="hidden-mobile">CORE_LOAD:</span> NOMINAL</span>
+              <span className="flex items-center gap-1"><Shield size={14} /> <span className="hidden-mobile">ENCRYPTION:</span> ACTIVE</span>
+            </div>
+          </div>
+          
+          {/* Advanced Feature: Real-time Diagnostics */}
+          <div className="hidden-mobile">
+            <SystemDiagnostics />
           </div>
         </div>
 
-        <div className="flex gap-3 items-start w-full justify-between-mobile">
+        <div className="flex gap-3 items-start w-full justify-between-mobile max-w-md">
           {}
           <div className="flex flex-col gap-2">
 
