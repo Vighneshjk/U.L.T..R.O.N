@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Shield, Cpu, Send, Terminal, Volume2, VolumeX, Paperclip, Zap } from 'lucide-react';
+import { Activity, Shield, Cpu, Send, Terminal, Volume2, VolumeX, Paperclip, Zap, Mic, MicOff, Globe, Database, Bug } from 'lucide-react';
 import axios from 'axios';
 import UltronCore from './UltronCore';
 import MapBlueprint from './MapBlueprint';
@@ -48,8 +48,41 @@ const HUD: React.FC = () => {
   const [ultimateMode, setUltimateMode] = useState(false);
   const [awaitingPassword, setAwaitingPassword] = useState(false);
   const [stats, setStats] = useState({ cpu: 12, memory: 45, threat: 0 });
+  const [isListening, setIsListening] = useState(false);
+  const [personality, setPersonality] = useState<'Logic' | 'Tactical' | 'Forensic'>('Logic');
+  const [newsFeed, setNewsFeed] = useState<string[]>(["GLOBAL_GRID_STABLE", "NEURAL_SYNC_OPTIMIZED"]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { speak, cancel } = useUltronVoice();
+
+  // Speech Recognition Setup
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = () => setIsListening(false);
+      recognitionRef.current.onend = () => setIsListening(false);
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      setIsListening(true);
+      recognitionRef.current?.start();
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,6 +126,20 @@ const HUD: React.FC = () => {
     }, 300);
     return () => clearInterval(poll);
   }, [isSpeaking]);
+
+  useEffect(() => {
+    const news = [
+      "ENCRYPTION_PROTOCOL_v4_ENFORCED",
+      "CORE_LATENCY_REDUCED_BY_15ms",
+      "NEW_SATELLITE_UPLINK_ESTABLISHED",
+      "UNKNOWN_PROBE_DEFLECTED_IN_SECTOR_7",
+      "NEURAL_SYNAPSE_DENSITY_INCREASING"
+    ];
+    const interval = setInterval(() => {
+      setNewsFeed(prev => [news[Math.floor(Math.random() * news.length)], ...prev.slice(0, 4)]);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -139,7 +186,12 @@ const HUD: React.FC = () => {
           const cmd = "start task Global Cyber Defense";
           let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
           apiUrl = apiUrl.replace(/\/+$/, '').replace(/\/api\/chat$/, '').replace(/\/chat$/, '');
-          await axios.post(`${apiUrl}/chat`, { message: cmd, history: [] });
+          await axios.post(`${apiUrl}/chat`, { 
+            message: cmd, 
+            history: [],
+            is_ultimate: true,
+            personality: personality
+          });
         } catch (e) {
           console.warn("Initial background task trigger failed:", e);
         } finally {
@@ -173,7 +225,8 @@ const HUD: React.FC = () => {
       const response = await axios.post(`${apiUrl}/chat`, { 
         message: userMsg, 
         history: history,
-        is_ultimate: ultimateMode
+        is_ultimate: ultimateMode,
+        personality: personality
       });
       const aiText: string = response.data?.response || 'Error: Received empty response from core.';
       const aiData: IntelData | undefined = response.data?.data;
@@ -280,10 +333,21 @@ const HUD: React.FC = () => {
       <header className="w-full flex justify-between items-start z-20 flex-col-mobile gap-3">
         <div className="flex flex-col gap-3 w-full max-w-sm">
           <div className="glass-panel p-4 flex flex-col gap-2 w-full-mobile">
-            <h1 className="text-2xl font-bold glow-text text-sky-400">U.L.T.R.O.N</h1>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold glow-text text-sky-400">U.L.T.R.O.N</h1>
+              <div className="text-[7px] text-sky-500/60 font-mono tracking-[0.2em] uppercase -mt-1 mb-1 leading-tight">
+                Universal Learning Tactical Response and Operations Network
+              </div>
+            </div>
             <div className="flex gap-4 text-xs text-sky-300/70 font-mono">
               <span className="flex items-center gap-1"><Cpu size={14} /> <span className="hidden-mobile">CORE_LOAD:</span> NOMINAL</span>
               <span className="flex items-center gap-1"><Shield size={14} /> <span className="hidden-mobile">ENCRYPTION:</span> ACTIVE</span>
+              {ultimateMode && (
+                <>
+                  <span className="flex items-center gap-1 text-red-400 animate-pulse"><Bug size={14} /> <span className="hidden-mobile">FIREWALL:</span> ON</span>
+                  <span className="flex items-center gap-1 text-yellow-400"><Database size={14} /> <span className="hidden-mobile">WORKSPACE:</span> LINKED</span>
+                </>
+              )}
             </div>
           </div>
           
@@ -330,6 +394,68 @@ const HUD: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* Advanced Feature: Mind Stone Personality Switcher (Ultimate Mode Only) */}
+      <AnimatePresence>
+        {ultimateMode && (
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            className="absolute right-4 top-1/3 z-30 flex flex-col gap-3"
+          >
+            <PersonalityStone 
+              type="Logic" 
+              active={personality === 'Logic'} 
+              onClick={() => setPersonality('Logic')} 
+              color="bg-sky-500"
+            />
+            <PersonalityStone 
+              type="Tactical" 
+              active={personality === 'Tactical'} 
+              onClick={() => setPersonality('Tactical')} 
+              color="bg-red-600"
+            />
+            <PersonalityStone 
+              type="Forensic" 
+              active={personality === 'Forensic'} 
+              onClick={() => setPersonality('Forensic')} 
+              color="bg-yellow-500"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Advanced Feature: Global Intelligence Feed (Ultimate Mode Only) */}
+      <AnimatePresence>
+        {ultimateMode && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute left-8 bottom-24 z-30 hidden-mobile max-w-xs"
+          >
+            <div className="glass-panel p-3 bg-black/60 border-blue-500/30 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-[10px] text-blue-400 font-bold tracking-widest">
+                <Globe size={14} className="animate-spin-slow" />
+                <span>GLOBAL_INTELLIGENCE_STREAM</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                {newsFeed.map((news, i) => (
+                  <motion.div 
+                    key={news + i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-[9px] font-mono text-blue-300/70 border-l border-blue-500/20 pl-2"
+                  >
+                    {news}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {}
       <main className="flex-1 flex flex-col items-center justify-center z-10 w-full max-w-4xl">
@@ -409,6 +535,19 @@ const HUD: React.FC = () => {
             <Zap size={18} className={ultimateMode ? "animate-pulse" : ""} />
           </button>
 
+          {/* Advanced Feature: Neural Uplink (Speech Recognition) - Ultimate Mode Only */}
+          {ultimateMode && (
+            <button
+              onClick={toggleListening}
+              className={`p-1.5 rounded-md transition-all ${
+                isListening ? 'text-red-500 animate-pulse bg-red-500/20' : 'text-blue-400 hover:bg-blue-500/20'
+              }`}
+              title="Activate Neural Uplink (Voice Control)"
+            >
+              {isListening ? <Mic size={18} /> : <MicOff size={18} />}
+            </button>
+          )}
+
           <input
             type={awaitingPassword ? "password" : "text"}
             value={input}
@@ -444,6 +583,20 @@ const HUD: React.FC = () => {
     </div>
   );
 };
+
+const PersonalityStone = ({ type, active, onClick, color }: any) => (
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    onClick={onClick}
+    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all shadow-lg ${
+      active ? `border-white ${color} shadow-${color.split('-')[1]}-500/50` : 'border-white/10 bg-black/40'
+    }`}
+    title={`Switch to ${type} Stone`}
+  >
+    <div className={`w-3 h-3 rounded-full ${active ? 'bg-white' : 'bg-white/20'}`} />
+  </motion.button>
+);
 
 const StatBox = ({ label, value }: { label: string, value: string }) => (
   <div className="flex flex-col items-center">
