@@ -5,7 +5,6 @@ import axios from 'axios';
 import UltronCore from './UltronCore';
 import MapBlueprint from './MapBlueprint';
 import SystemDiagnostics from './SystemDiagnostics';
-import MatrixRain from './MatrixRain';
 import { useUltronVoice } from '../hooks/useUltronVoice';
 
 const renderTextWithLinks = (text: string) => {
@@ -325,9 +324,6 @@ const HUD: React.FC = () => {
     <div className={`relative w-full h-full p-8 flex flex-col items-center justify-between overflow-hidden ${ultimateMode ? 'ultimate-mode' : ''}`}>
       <div className="background-grid" />
       <div className="scanline" />
-      
-      {/* Advanced Feature: Digital Rain */}
-      <MatrixRain color={ultimateMode ? '#ff003c' : '#00ff41'} />
 
       {}
       <header className="w-full flex justify-between items-start z-20 flex-col-mobile gap-3">
