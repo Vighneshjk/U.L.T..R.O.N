@@ -14,6 +14,7 @@
   --core-glow: #00ff41;
   --core-shadow: rgba(0, 255, 65, 0.9);
   --core-shadow-dim: rgba(0, 255, 65, 0.4);
+  --map-hue: 190deg;
 }
 
 * {
@@ -269,44 +270,45 @@ h1, h2, h3, .font-display {
 }
 
 .ultimate-mode {
-  --accent-color: #0088ff;
-  --accent-glow: rgba(0, 136, 255, 0.4);
-  --glass-border: rgba(0, 136, 255, 0.3);
-  --text-primary: #3ea0ff;
-  --text-secondary: #0056b3;
-  --core-gradient-from: #0088ff;
-  --core-gradient-to: #001b3b;
-  --core-glow: #0088ff;
-  --core-shadow: rgba(0, 136, 255, 0.9);
-  --core-shadow-dim: rgba(0, 136, 255, 0.4);
+  --accent-color: #ff003c;
+  --accent-glow: rgba(255, 0, 60, 0.4);
+  --glass-border: rgba(255, 0, 60, 0.3);
+  --text-primary: #ff3e3e;
+  --text-secondary: #b3002b;
+  --core-gradient-from: #ff003c;
+  --core-gradient-to: #3b0000;
+  --core-glow: #ff003c;
+  --core-shadow: rgba(255, 0, 60, 0.9);
+  --core-shadow-dim: rgba(255, 0, 60, 0.4);
+  --map-hue: 350deg;
 }
 
-.ultimate-mode .text-sky-400 { color: #0088ff; }
-.ultimate-mode .text-sky-300 { color: #3ea0ff; }
-.ultimate-mode .text-sky-300\/70 { color: rgba(62, 160, 255, 0.7); }
-.ultimate-mode .text-sky-200 { color: #d1e9ff; }
-.ultimate-mode .text-sky-100 { color: #f1f8ff; }
-.ultimate-mode .text-sky-500 { color: #0088ff; }
-.ultimate-mode .text-sky-700 { color: #001b3b; }
-.ultimate-mode .text-sky-700\/50 { color: rgba(0, 27, 59, 0.5); }
+.ultimate-mode .text-sky-400 { color: #ff003c; }
+.ultimate-mode .text-sky-300 { color: #ff3e3e; }
+.ultimate-mode .text-sky-300\/70 { color: rgba(255, 62, 62, 0.7); }
+.ultimate-mode .text-sky-200 { color: #ffd1d1; }
+.ultimate-mode .text-sky-100 { color: #fff1f1; }
+.ultimate-mode .text-sky-500 { color: #ff003c; }
+.ultimate-mode .text-sky-700 { color: #3b0000; }
+.ultimate-mode .text-sky-700\/50 { color: rgba(59, 0, 0, 0.5); }
 .ultimate-mode .text-blue-100 { color: #ffffff; }
 
-.ultimate-mode .bg-sky-500\/20 { background-color: rgba(0, 136, 255, 0.2); }
-.ultimate-mode .bg-sky-500\/40 { background-color: rgba(0, 136, 255, 0.4); }
+.ultimate-mode .bg-sky-500\/20 { background-color: rgba(255, 0, 60, 0.2); }
+.ultimate-mode .bg-sky-500\/40 { background-color: rgba(255, 0, 60, 0.4); }
 
-.ultimate-mode .border-sky-400\/30 { border-color: rgba(0, 136, 255, 0.3); }
-.ultimate-mode .border-sky-400\/50 { border-color: rgba(0, 136, 255, 0.5); }
-.ultimate-mode .border-sky-500\/30 { border-color: rgba(0, 136, 255, 0.3); }
-.ultimate-mode .border-sky-700\/30 { border-color: rgba(0, 27, 59, 0.3); }
-.ultimate-mode .border-blue-500\/30 { border-color: rgba(0, 136, 255, 0.4); }
+.ultimate-mode .border-sky-400\/30 { border-color: rgba(255, 0, 60, 0.3); }
+.ultimate-mode .border-sky-400\/50 { border-color: rgba(255, 0, 60, 0.5); }
+.ultimate-mode .border-sky-500\/30 { border-color: rgba(255, 0, 60, 0.3); }
+.ultimate-mode .border-sky-700\/30 { border-color: rgba(59, 0, 0, 0.3); }
+.ultimate-mode .border-blue-500\/30 { border-color: rgba(255, 0, 60, 0.4); }
 
-.ultimate-mode .scanline { background: rgba(0, 136, 255, 0.1); }
+.ultimate-mode .scanline { background: rgba(255, 0, 60, 0.1); }
 .ultimate-mode .background-grid {
   background-image: 
-    linear-gradient(rgba(0, 136, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 136, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 0, 60, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 60, 0.05) 1px, transparent 1px);
 }
 
-.ultimate-mode .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 136, 255, 0.05); }
-.ultimate-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 136, 255, 0.2); }
-.ultimate-mode .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0, 136, 255, 0.4); }
+.ultimate-mode .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 0, 60, 0.05); }
+.ultimate-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 0, 60, 0.2); }
+.ultimate-mode .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 0, 60, 0.4); }

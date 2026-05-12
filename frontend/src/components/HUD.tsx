@@ -390,7 +390,7 @@ const HUD: React.FC = () => {
             title={ultimateMode ? "Disable Ultimate Mode" : "Activate Ultimate Mode"}
             className={`p-1.5 rounded-md transition-all ${
               ultimateMode
-                ? 'text-blue-500 bg-blue-900/30 shadow-md shadow-blue-500/40'
+                ? 'text-red-500 bg-red-900/30 shadow-md shadow-red-500/40'
                 : 'text-sky-500/60 hover:text-sky-300 hover:bg-sky-500/20'
             }`}
           >
