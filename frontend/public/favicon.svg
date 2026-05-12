@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background -->
+  <rect width="100" height="100" rx="20" fill="#000500" />
+  
+  <!-- Robot Head Outline -->
+  <rect x="20" y="30" width="60" height="40" rx="10" fill="none" stroke="#00ff41" stroke-width="4" />
+  
+  <!-- Glowing Eyes -->
+  <circle cx="35" cy="50" r="6" fill="#00ff41">
+    <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="65" cy="50" r="6" fill="#00ff41">
+    <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Mouth / Grill -->
+  <line x1="40" y1="62" x2="60" y2="62" stroke="#00ff41" stroke-width="3" stroke-linecap="round" />
+  <line x1="45" y1="62" x2="45" y2="66" stroke="#00ff41" stroke-width="2" />
+  <line x1="50" y1="62" x2="50" y2="66" stroke="#00ff41" stroke-width="2" />
+  <line x1="55" y1="62" x2="55" y2="66" stroke="#00ff41" stroke-width="2" />
+  
+  <!-- Antenna -->
+  <line x1="50" y1="30" x2="50" y2="15" stroke="#00ff41" stroke-width="4" />
+  <circle cx="50" cy="15" r="4" fill="#00ff41">
+    <animate attributeName="fill" values="#00ff41;#ff0041;#00ff41" dur="1s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Ears / Modules -->
+  <path d="M 20 40 L 12 40 L 12 60 L 20 60" fill="none" stroke="#00ff41" stroke-width="4" stroke-linejoin="round" />
+  <path d="M 80 40 L 88 40 L 88 60 L 80 60" fill="none" stroke="#00ff41" stroke-width="4" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,12 @@
+﻿node_modules
+.vite
+__pycache__
+.env
+.antigravityignore
+scratch
+bin
+dist
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
