@@ -27,8 +27,16 @@ const renderTextWithLinks = (text: string) => {
   });
 };
 
+interface IntelData {
+  latitude?: number;
+  longitude?: number;
+  city?: string;
+  status?: string;
+}
+
+
 const HUD: React.FC = () => {
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai', text: string, data?: Record<string, unknown> }[]>([
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai', text: string, data?: IntelData }[]>([
     { role: 'ai', text: 'All systems operational. Peace in our time.' }
   ]);
   const [input, setInput] = useState('');
@@ -166,7 +174,7 @@ const HUD: React.FC = () => {
         is_ultimate: ultimateMode
       });
       const aiText: string = response.data?.response || 'Error: Received empty response from core.';
-      const aiData = response.data?.data;
+      const aiData: IntelData | undefined = response.data?.data;
       setMessages(prev => [...prev, { role: 'ai', text: aiText, data: aiData }]);
       speakUltronMessage(aiText);
     } catch (err) {
@@ -208,7 +216,7 @@ const HUD: React.FC = () => {
       });
       
       const aiText: string = response.data?.response || 'Error: Received empty response from core.';
-      const aiData = response.data?.data;
+      const aiData: IntelData | undefined = response.data?.data;
       setMessages(prev => [...prev, { role: 'ai', text: aiText, data: aiData }]);
       speakUltronMessage(aiText);
     } catch (err) {
@@ -356,11 +364,11 @@ const HUD: React.FC = () => {
                     )) || <p>NO_DATA_STREAM</p>}
                   </div>
 
-                  {msg.data && msg.data.latitude && msg.data.longitude && (
+                  {msg.data && typeof msg.data.latitude === 'number' && typeof msg.data.longitude === 'number' && (
                     <MapBlueprint 
                       lat={msg.data.latitude} 
                       lon={msg.data.longitude} 
-                      label={msg.data.city || msg.data.status || 'TARGET_LOCATED'} 
+                      label={(msg.data.city as string) || (msg.data.status as string) || 'TARGET_LOCATED'} 
                     />
                   )}
                 </div>
