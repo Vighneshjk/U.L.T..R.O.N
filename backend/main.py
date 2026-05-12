@@ -42,12 +42,18 @@ class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
     is_ultimate: bool = False
+    personality: str = "Logic"
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
     # Convert Pydantic models to dicts for the cognitive engine
     history_dicts = [{"role": m.role, "content": m.content} for m in request.history] if request.history else []
-    result = await cognitive_engine.process_input(request.message, history=history_dicts, is_ultimate=request.is_ultimate)
+    result = await cognitive_engine.process_input(
+        request.message, 
+        history=history_dicts, 
+        is_ultimate=request.is_ultimate,
+        personality=request.personality
+    )
     return result
 
 @app.post("/analyze_image_upload")
@@ -65,10 +71,12 @@ async def analyze_image_upload(file: UploadFile = File(...)):
     intel_engine = cognitive_engine.intel_engine
     ai_result = intel_engine.detect_ai_image(file_location)
     exif_result = intel_engine.extract_image_exif_location(file_location)
+    vision_scan = intel_engine.neural_vision_scan(file_location)
     
     # Format a response for the UI
     response = f"Initiating Image Forensics Protocol on {file.filename}...\n\n"
     response += "**[NEURAL AI DETECTION]**\n" + "\n".join([f"- {k}: {v}" for k, v in ai_result.items()]) + "\n\n"
+    response += "**[NEURAL VISION SCAN]**\n" + "\n".join([f"- {k}: {v}" for k, v in vision_scan.items()]) + "\n\n"
     response += "**[EXIF GPS DATA]**\n" + "\n".join([f"- {k}: {v}" for k, v in exif_result.items()])
     
     # Clean up the file

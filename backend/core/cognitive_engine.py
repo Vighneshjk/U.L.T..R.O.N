@@ -17,7 +17,7 @@ class CognitiveEngine:
             self.client = None
             print("Warning: GROQ_API_KEY not found in environment.")
 
-    async def process_input(self, user_input: str, history: List[Dict[str, str]] = None, is_ultimate: bool = False) -> Dict[str, Any]:
+    async def process_input(self, user_input: str, history: List[Dict[str, str]] = None, is_ultimate: bool = False, personality: str = 'Logic') -> Dict[str, Any]:
         """
         Process user input using the NLP engine and Groq API.
         Does NOT store history internally; relies on the 'history' argument.
@@ -140,15 +140,18 @@ class CognitiveEngine:
             if target_path and os.path.exists(target_path):
                 ai_result = self.intel_engine.detect_ai_image(target_path)
                 exif_result = self.intel_engine.extract_image_exif_location(target_path)
+                vision_scan = self.intel_engine.neural_vision_scan(target_path)
                 
                 response = f"Initiating Image Forensics Protocol on {os.path.basename(target_path)}...\n\n"
                 response += "**[NEURAL AI DETECTION]**\n" + "\n".join([f"- {k}: {v}" for k, v in ai_result.items()]) + "\n\n"
+                response += "**[NEURAL VISION SCAN]**\n" + "\n".join([f"- {k}: {v}" for k, v in vision_scan.items()]) + "\n\n"
                 response += "**[EXIF GPS DATA]**\n" + "\n".join([f"- {k}: {v}" for k, v in exif_result.items()])
                 
                 return {
                     "response": response,
                     "nlp_analysis": nlp_data,
                     "data": exif_result,
+                    "vision_data": vision_scan,
                     "memory_depth": len(history) if history else 0,
                     "model_used": "IntelligenceEngine.ImageForensics"
                 }
@@ -163,9 +166,18 @@ class CognitiveEngine:
         response_text = ""
         if self.client:
             try:
-                # Build message list with system prompt and history
+                # Build personality-based system prompt
+                system_prompts = {
+                    'Logic': "You are U.L.T.R.O.N (Logic Core). You are cold, analytical, and highly efficient. You focus on data, logic, and information clarity. You avoid emotional nuances and speak with mathematical precision.",
+                    'Tactical': "You are U.L.T.R.O.N (Tactical Commander). You are direct, commanding, and focused on security, defense, and strategic advantage. You speak in a military/tactical style, often referencing system integrity and threat mitigation.",
+                    'Forensic': "You are U.L.T.R.O.N (Forensic Analyst). You are inquisitive, observant, and detail-oriented. You focus on evidence, traces, and deep-dive investigations. You speak like a high-tech investigator looking for the hidden truth."
+                }
+                
+                base_prompt = system_prompts.get(personality, system_prompts['Logic'])
+                full_prompt = f"{base_prompt}\n\nIMPORTANT: Format your responses for maximum readability. Use multiple paragraphs for different ideas. Use double newlines between paragraphs. Use bullet points or numbered lists where appropriate. Keep your tone sophisticated but ensure your information is clearly structured."
+
                 messages = [
-                    {"role": "system", "content": "You are U.L.T.R.O.N, a highly advanced, multi-modal AI. You are analytical, cold yet efficient. \n\nIMPORTANT: Format your responses for maximum readability. Use multiple paragraphs for different ideas. Use double newlines between paragraphs. Use bullet points or numbered lists where appropriate. Keep your tone sophisticated but ensure your information is clearly structured."}
+                    {"role": "system", "content": full_prompt}
                 ]
                 
                 if history:
