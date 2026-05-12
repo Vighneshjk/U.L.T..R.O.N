@@ -50,6 +50,7 @@ const HUD: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [personality, setPersonality] = useState<'Logic' | 'Tactical' | 'Forensic'>('Logic');
   const [newsFeed, setNewsFeed] = useState<string[]>(["GLOBAL_GRID_STABLE", "NEURAL_SYNC_OPTIMIZED"]);
+  const [lastTaskLog, setLastTaskLog] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { speak, cancel } = useUltronVoice();
 
@@ -105,9 +106,7 @@ const HUD: React.FC = () => {
         
         const response = await axios.get(`${apiUrl}/task_logs`);
         if (response.data && response.data.logs && response.data.logs.length > 0) {
-          response.data.logs.forEach((log: string) => {
-            setMessages(prev => [...prev, { role: 'ai', text: log }]);
-          });
+          setLastTaskLog(response.data.logs[response.data.logs.length - 1]);
         }
       } catch {
         // Silently fail to avoid spamming errors when backend is restarting
@@ -168,9 +167,20 @@ const HUD: React.FC = () => {
     const userMsg = input;
     const targetPassword = import.meta.env.VITE_ULTIMATE_PASSWORD || 'nvj';
     const isSecretCommand = userMsg.trim().toLowerCase() === targetPassword.toLowerCase();
+    const isAccessCommand = userMsg.toLowerCase().includes("access device") || userMsg.toLowerCase().includes("connect to");
     
     setMessages(prev => [...prev, { role: 'user', text: (awaitingPassword || isSecretCommand) ? '**********' : userMsg }]);
     setInput('');
+
+    if (isAccessCommand && ultimateMode) {
+      setIsProcessing(true);
+      speakUltronMessage("Initiating remote uplink... Bypassing local firewall... Device access granted.");
+      setTimeout(() => {
+        setMessages(prev => [...prev, { role: 'ai', text: `[UPLINK_ESTABLISHED] Connected to target device. Neural bridge active. Waiting for instructions...` }]);
+        setIsProcessing(false);
+      }, 2000);
+      return;
+    }
 
     if (awaitingPassword || ( isSecretCommand && !ultimateMode )) {
       setAwaitingPassword(false);
@@ -342,6 +352,20 @@ const HUD: React.FC = () => {
                 <>
                   <span className="flex items-center gap-1 text-red-400 animate-pulse"><Bug size={14} /> <span className="hidden-mobile">FIREWALL:</span> ON</span>
                   <span className="flex items-center gap-1 text-yellow-400"><Database size={14} /> <span className="hidden-mobile">WORKSPACE:</span> LINKED</span>
+                  {lastTaskLog && (
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="flex items-center gap-1 text-green-500 animate-pulse cursor-help relative group"
+                      title={lastTaskLog}
+                    >
+                      <Shield size={14} />
+                      <span className="hidden-mobile text-[8px]">CYBER_DEFENSE_ACTIVE</span>
+                      <div className="absolute top-full mt-2 left-0 w-64 p-2 bg-black/90 border border-green-500/30 text-[8px] font-mono text-green-400 z-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none break-all">
+                        {lastTaskLog}
+                      </div>
+                    </motion.div>
+                  )}
                 </>
               )}
             </div>
